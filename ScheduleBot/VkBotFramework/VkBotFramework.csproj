@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Mikhail Petrov</Authors>
+    <Description>Удобная, маленькая и кроссплатформенная библиотека для создания ботов в соц. сети ВКонтакте</Description>
+    <PackageLicenseUrl>https://github.com/truecooler/VkBotFramework/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/truecooler/VkBotFramework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/truecooler/VkBotFramework</RepositoryUrl>
+    <PackageTags>vk vkontakte vkontakte-api vkapi vk-api vk-bot vkbot вк вконтакте</PackageTags>
+    <Copyright>MIT</Copyright>
+    <Company>TheCooler</Company>
+    <PackageIconUrl>https://github.com/truecooler/VkBotFramework/raw/master/vkbotframework.png</PackageIconUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VkNet" Version="1.53.0" />
+  </ItemGroup>
+
+</Project>
