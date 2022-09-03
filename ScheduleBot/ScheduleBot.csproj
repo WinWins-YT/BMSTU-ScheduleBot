@@ -17,4 +17,10 @@
     <PackageReference Include="VkNet.AudioBypassService" Version="1.7.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ZuevFace.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
