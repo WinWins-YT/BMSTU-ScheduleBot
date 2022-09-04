@@ -9,25 +9,27 @@
 ###### Для запуска:
 
 	git clone https://github.com/WinWins-YT/BMSTU-ScheduleBot
+	cd BMSTU-ScheduleBot\ScheduleToJSON
 
-Открыть файл ScheduleBot.csproj в Visual Studio и запустить или скомпилировать в .NET Framework
+Открыть файл ScheduleToJSON.csproj в Visual Studio и запустить или скомпилировать в .NET Framework
 
 ###### Как работает
 
 Этот проект переводит таблицу Excel с расписанием в JSON файл для дальнейшего использования
+
 Здесь используется COM библиотека Excel, поэтому запускать это следует только на Windows с установленным пакетом Microsoft Office
 
-При запуске предлагается указать путь к .xls файлу с расписанием. После этого будет выводится список всех полученных групп из этого файла. Затем создастся в папке `/bin/Debug/net6.0-windows` файл `schedule.json`
+При запуске предлагается указать путь к .xls файлу с расписанием. После этого будет выводится список всех полученных групп из этого файла. Затем создастся в папке `\bin\Debug\net6.0-windows` файл `schedule.json`
 
 ### ScheduleBot
 
 ###### Для запуска:
 
 	git clone https://github.com/WinWins-YT/BMSTU-ScheduleBot
-	cd BMSTU-ScheduleBot\ScheduleBot
+	cd BMSTU-ScheduleBot/ScheduleBot
 	dotnet build
 
-Скопировать файл `schedule.json`, который сформировал ScheduleToJSON и файл `settings.json` с настройками, если есть, файл `users.json`, который содержит зарегистрированных пользователей и их группы
+Скопировать файл `schedule.json`, который сформировал ScheduleToJSON, файл `settings.json` с настройками, и, если есть, файл `users.json`, который содержит зарегистрированных пользователей и их группы
 
 	dotnet bin/Debug/net6.0/ScheduleBot.dll
 
@@ -54,7 +56,7 @@
 ###### Для запуска
 
 	git clone https://github.com/WinWins-YT/BMSTU-ScheduleBot
-	cd BMSTU-ScheduleBot\ScheduleAPI
+	cd BMSTU-ScheduleBot/ScheduleAPI
 	dotnet build
 
 Скопировать файл `schedule.json`, который сформировал ScheduleToJSON
@@ -66,8 +68,11 @@
 Это API для получения расписания посредством HTTP GET запросов. Список методов и тестовый стенд можно увидеть по адресу http://localhost/swagger
 
 GET /api/v1 => Список организаций (Студенты)
+
 GET /api/v1/{org} => Список курсов ({org} = Студенты)
+
 GET /api/v1/{org}/{course} => Список групп данного курса ({org} = Студенты, {course} = 1 курс)
+
 GET /api/v1/{org}/{course}/{group}/schedule => Расписание данной группы ({org} = Студенты, {course} = 1 курс, {group} = ИУК2-11Б)
 
 
