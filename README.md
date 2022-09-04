@@ -29,7 +29,7 @@
 	cd BMSTU-ScheduleBot/ScheduleBot
 	dotnet build
 
-Скопировать файл `schedule.json`, который сформировал ScheduleToJSON, файл `settings.json` с настройками, и, если есть, файл `users.json`, который содержит зарегистрированных пользователей и их группы
+Скопировать файл `schedule.json`, который сформировал ScheduleToJSON, файл `settings.json` с настройками, и, если есть, файл `users.json`, который содержит зарегистрированных пользователей и их группы, в bin/Debug/net6.0
 
 	dotnet bin/Debug/net6.0/ScheduleBot.dll
 
@@ -59,7 +59,7 @@
 	cd BMSTU-ScheduleBot/ScheduleAPI
 	dotnet build
 
-Скопировать файл `schedule.json`, который сформировал ScheduleToJSON
+Скопировать файл `schedule.json`, который сформировал ScheduleToJSON в bin/Debug/net6.0
 
 	dotnet bin/Debug/net6.0/ScheduleAPI.dll
 	
