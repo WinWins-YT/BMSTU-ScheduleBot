@@ -25,7 +25,7 @@ if (!IsUnix())
     Console.InputEncoding = Encoding.Unicode;
     Console.OutputEncoding = Encoding.Unicode;
 }
-Version version = new(0, 3, 105);
+Version version = new(0, 3, 113);
 
 ServiceCollection services = new();
 services.AddSingleton(new HttpClient() { Timeout = TimeSpan.FromSeconds(300) });
@@ -69,6 +69,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
 {
     try
     {
+        if (e.Message.PeerId >= 2000000000) return;
         VkBot instance = sender as VkBot;
         Regex regexGroup = new(@"(ИУК[1-7]|МК[1-9])-\d\d\d?(Б|М)?");
         Regex regexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
