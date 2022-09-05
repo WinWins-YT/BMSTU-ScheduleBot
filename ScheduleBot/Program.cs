@@ -25,7 +25,7 @@ if (!IsUnix())
     Console.InputEncoding = Encoding.Unicode;
     Console.OutputEncoding = Encoding.Unicode;
 }
-Version version = new(0, 3, 113);
+Version version = new(0, 4, 152);
 
 ServiceCollection services = new();
 services.AddSingleton(new HttpClient() { Timeout = TimeSpan.FromSeconds(300) });
@@ -144,6 +144,22 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
                     Keyboard = menuKeyboard,
                     PeerId = e.Message.PeerId
                 });
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "❗ВНИМАНИЕ❗\n\n" +
+                        "Расписание может плохо спарситься или же измениться в течение семестра.Бот не несет ответственности за такие ошибки,\n" +
+                        "невозможно что - то сделать без косяков(надеемся на взаимопонимание).Бот призван облегчить жизнь студентам,\n" +
+                        "поэтому при обнаружении ошибок – сообщать https://vk.com/top_programer или https://vk.com/sanekmethanol\n\n" +
+                        "⚠ Инструкция:\n\n" +
+                        "📌 Есть кнопочка с расписанием, а есть кнопочка с настройками\n" +
+                        "📌Если нажать кнопочку с настройками, откроются настройки\n" +
+                        "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
+                        "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
+                        "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
+                        "Version: " + (version.Major == 0 ? "BETA " : "") + version.ToString(),
+                    PeerId = e.Message.PeerId
+                });
             }
             else
             {
@@ -197,9 +213,9 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             User user = await GetUser(e.Message.FromId, e.Message.PeerId);
             if (user == null) return;
             int day = (int)DateTime.Now.DayOfWeek + 1;
-            DateTime semStart = new(2022, 9, 1);
-            DateTime nowMonday = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek + 1);
-            bool isNumeric = (int)((nowMonday - semStart).TotalDays / 7 % 2) == 0;
+            DateTime semStart = new(2022, 8, 29);
+            DateTime nowMonday = DateTime.Now.AddDays((day == 0 ? -7 : -day) + 1);
+            bool isNumeric = (int)((nowMonday - semStart).Days / 7 % 2) == 0;
             if (day == 1) isNumeric = !isNumeric;
             StringBuilder sb = new();
             if (day == 7)
@@ -441,9 +457,9 @@ Task taskAlarm = Task.Run(async () =>
         foreach (User user in alarmUsers)
         {
             Group group = groups.First(x => x.Name == user.Group);
-            DateTime semStart = new DateTime(2022, 9, 1);
-            DateTime nowMonday = DateTime.Now.AddDays(-(int)DateTime.Now.DayOfWeek + 1);
-            bool isNumeric = (nowMonday - semStart).TotalDays / 7 % 2 == 0;
+            DateTime semStart = new DateTime(2022, 8, 29);
+            DateTime nowMonday = DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
+            bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
             StringBuilder sb = new();
             int dw = (int)DateTime.Now.DayOfWeek;
             if (dw == 0)
