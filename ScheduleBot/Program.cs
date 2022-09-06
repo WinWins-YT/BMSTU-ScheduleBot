@@ -513,6 +513,15 @@ AppDomain.CurrentDomain.ProcessExit += (s, e) =>
 {
     Console.WriteLine("Exiting...");
     //bot.Api.Groups.DisableOnline(Convert.ToUInt64(bot.GroupId));
+    foreach (long? user in settings.AdminUsers)
+    {
+        bot.Api.Messages.Send(new VkNet.Model.RequestParams.MessagesSendParams()
+        {
+            RandomId = Environment.TickCount,
+            Message = "Bot is shutting down...",
+            UserId = user
+        });
+    }
     tokenSource.Cancel();
 };
 
