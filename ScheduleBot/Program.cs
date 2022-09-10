@@ -25,7 +25,7 @@ if (!IsUnix())
     Console.InputEncoding = Encoding.Unicode;
     Console.OutputEncoding = Encoding.Unicode;
 }
-Version version = new(0, 4, 152);
+Version version = new(0, 4, 173);
 
 ServiceCollection services = new();
 services.AddSingleton(new HttpClient() { Timeout = TimeSpan.FromSeconds(300) });
@@ -216,7 +216,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             DateTime semStart = new(2022, 8, 29);
             DateTime nowMonday = DateTime.Now.AddDays((day == 0 ? -7 : -day) + 2);
             bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
-            if (day == 1) isNumeric = !isNumeric;
+            //if (day == 1) isNumeric = !isNumeric;
             StringBuilder sb = new();
             if (day == 7)
             {
