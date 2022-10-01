@@ -25,7 +25,7 @@ if (!IsUnix())
     Console.InputEncoding = Encoding.Unicode;
     Console.OutputEncoding = Encoding.Unicode;
 }
-Version version = new(0, 4, 173);
+Version version = new(0, 5, 200);
 
 ServiceCollection services = new();
 services.AddSingleton(new HttpClient() { Timeout = TimeSpan.FromSeconds(300) });
@@ -185,10 +185,10 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             if (dw == 0)
             {
                 dw = 1;
-                sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник");
                 isNumeric = !isNumeric;
+                sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник (" + (isNumeric ? "числитель" : "знаменатель") + ")");
             }
-            else sb.AppendLine("Расписание на сегодня");
+            else sb.AppendLine("Расписание на сегодня (" + (isNumeric ? "числитель" : "знаменатель") + ")");
             List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)dw && (x.Type == LessonType.All || x.Type == (isNumeric ? LessonType.Numerator : LessonType.Denominator))).ToList();
             lessons = lessons.OrderBy(x => x.StartTime).ToList();
             sb.AppendLine();
@@ -197,7 +197,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
                 sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
                 sb.AppendLine($"📚 Предмет: {lesson.Name}");
                 sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                sb.AppendLine($"👨‍🏫 Препод: {lesson.Teacher}");
+                sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
                 sb.AppendLine();
             }
             await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
@@ -221,10 +221,10 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             if (day == 7)
             {
                 day = 1;
-                sb.AppendLine("Так как завтра воскресенье, то расписание на понедельник");
                 isNumeric = !isNumeric;
+                sb.AppendLine("Так как завтра воскресенье, то расписание на понедельник (" + (isNumeric ? "числитель" : "знаменатель") + ")");
             }
-            else sb.AppendLine("Расписание на завтра");
+            else sb.AppendLine("Расписание на завтра (" + (isNumeric ? "числитель" : "знаменатель") + ")");
             Group group = groups.First(x => x.Name == user.Group);
             List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)day && (x.Type == LessonType.All || x.Type == (isNumeric ? LessonType.Numerator : LessonType.Denominator))).ToList();
             lessons = lessons.OrderBy(x => x.StartTime).ToList();
@@ -234,7 +234,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
                 sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
                 sb.AppendLine($"📚 Предмет: {lesson.Name}");
                 sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                sb.AppendLine($"👨‍🏫 Препод: {lesson.Teacher}");
+                sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
                 sb.AppendLine();
             }
             await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
@@ -408,11 +408,11 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             sb.AppendLine();
             foreach (var lesson in lessons)
             {
+                sb.AppendLine("👀 " + (lesson.Type == LessonType.All ? "По числителю и знаменателю" : lesson.Type == LessonType.Numerator ? "По числителю" : "По знаменателю"));
                 sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
                 sb.AppendLine($"📚 Предмет: {lesson.Name}");
                 sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                sb.AppendLine("👀 " + (lesson.Type == LessonType.All ? "По числителю и знаменателю" : lesson.Type == LessonType.Numerator ? "По числителю" : "По знаменателю"));
-                sb.AppendLine($"👨‍🏫 Препод: {lesson.Teacher}");
+                sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
                 sb.AppendLine();
             }
             await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
@@ -465,10 +465,10 @@ Task taskAlarm = Task.Run(async () =>
             if (dw == 0)
             {
                 dw = 1;
-                sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник");
+                sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник (" + (isNumeric ? "числитель" : "знаменатель") + ")");
                 isNumeric = !isNumeric;
             }
-            else sb.AppendLine("Расписание на сегодня");
+            else sb.AppendLine("Расписание на сегодня (" + (isNumeric ? "числитель" : "знаменатель") + ")");
             List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)dw && (x.Type == LessonType.All || x.Type == (isNumeric ? LessonType.Numerator : LessonType.Denominator))).ToList();
             lessons = lessons.OrderBy(x => x.StartTime).ToList();
             sb.AppendLine();
@@ -477,7 +477,7 @@ Task taskAlarm = Task.Run(async () =>
                 sb.AppendLine($"⌛ Пара {lesson.Para} в {lesson.StartTime} до {lesson.EndTime}");
                 sb.AppendLine($"📚 Предмет: {lesson.Name}");
                 sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                sb.AppendLine($"👨‍🏫 Препод: {lesson.Teacher}");
+                sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
                 sb.AppendLine();
             }
             await bot.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
