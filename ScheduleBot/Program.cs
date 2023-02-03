@@ -156,7 +156,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
                         "📌Если нажать кнопочку с настройками, откроются настройки\n" +
                         "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
                         "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
-                        "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
+                        "🚽Сделано WinWins и чуть-чуть Methanol, работает на " + RuntimeInformation.FrameworkDescription + "\n" +
                         "Version: " + (version.Major == 0 ? "BETA " : "") + version.ToString(),
                     PeerId = e.Message.PeerId
                 });
@@ -177,7 +177,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             User user = await GetUser(e.Message.FromId, e.Message.PeerId);
             if (user == null) return;
             Group group = groups.First(x => x.Name == user.Group);
-            DateTime semStart = new DateTime(2022, 8, 29);
+            DateTime semStart = new DateTime(2023, 2, 6);
             DateTime nowMonday = DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
             bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
             StringBuilder sb = new();
@@ -213,7 +213,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
             User user = await GetUser(e.Message.FromId, e.Message.PeerId);
             if (user == null) return;
             int day = (int)DateTime.Now.DayOfWeek + 1;
-            DateTime semStart = new(2022, 8, 29);
+            DateTime semStart = new(2023, 2, 6);
             DateTime nowMonday = DateTime.Now.AddDays((day == 0 ? -7 : -day) + 2);
             bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
             //if (day == 1) isNumeric = !isNumeric;
@@ -381,7 +381,7 @@ async void Bot_OnMessageReceived(object? sender, VkBotFramework.Models.MessageRe
                 "📌Если нажать кнопочку с настройками, откроются настройки\n" +
                 "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
                 "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
-                "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
+                "🚽Сделано WinWins и чуть-чуть Methanol, работает на " + RuntimeInformation.FrameworkDescription + "\n" +
                 "Version: " + (version.Major == 0 ? "BETA " : "") + version.ToString(),
                 PeerId = e.Message.PeerId
             });
@@ -457,7 +457,7 @@ Task taskAlarm = Task.Run(async () =>
         foreach (User user in alarmUsers)
         {
             Group group = groups.First(x => x.Name == user.Group);
-            DateTime semStart = new DateTime(2022, 8, 29);
+            DateTime semStart = new DateTime(2023, 2, 6);
             DateTime nowMonday = DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
             bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
             StringBuilder sb = new();
