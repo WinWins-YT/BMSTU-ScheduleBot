@@ -11,5 +11,6 @@ namespace ScheduleBot
         public string Token { get; set; }
         public string GroupUrl { get; set; }
         public long?[] AdminUsers { get; set; }
+        public string SemesterStart { get; set; }
     }
 }
