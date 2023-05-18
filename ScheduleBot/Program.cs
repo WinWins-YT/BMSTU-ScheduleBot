@@ -77,7 +77,8 @@ async void Bot_OnMessageReceived(object sender, VkBotFramework.Models.MessageRec
             {
                 var server = instance.Api.Photo.GetMessagesUploadServer(instance.GroupId);
                 WebClient web = new();
-                string responseStr = Encoding.ASCII.GetString(web.UploadFile(server.UploadUrl, appRoot + "ZuevFace.png"));
+                string responseStr =
+                    Encoding.ASCII.GetString(web.UploadFile(server.UploadUrl, appRoot + "ZuevFace.png"));
                 var photo = await instance.Api.Photo.SaveMessagesPhotoAsync(responseStr);
                 await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
                 {
@@ -89,7 +90,8 @@ async void Bot_OnMessageReceived(object sender, VkBotFramework.Models.MessageRec
                     Keyboard = new KeyboardBuilder().SetOneTime()
                         .AddButton("Регистрация", "", KeyboardButtonColor.Primary)
                         .Build(),
-                    Message = "Добро пожаловать в замечательного и очень хорошо работающего бота для помощи студентам. Бот пока в бета режиме, и поэтому, если вдруг че не работает, просьба сообщать @top_programer или @sanekmethanol",
+                    Message =
+                        "Добро пожаловать в замечательного и очень хорошо работающего бота для помощи студентам. Бот пока в бета режиме, и поэтому, если вдруг че не работает, просьба сообщать @top_programer или @sanekmethanol",
                     PeerId = e.Message.PeerId
                 });
                 break;
@@ -111,327 +113,356 @@ async void Bot_OnMessageReceived(object sender, VkBotFramework.Models.MessageRec
                     PeerId = e.Message.PeerId
                 });
                 break;
-            default:
+            case "сегодня":
             {
-                if (e.Message.Text.ToLower().StartsWith("/reg ") && regexGroup.IsMatch(e.Message.Text.Split(' ')[1].ToUpper()))
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                Group group = groups.First(x => x.Name == user.Group);
+                DateTime semStart = DateTime.ParseExact(settings.SemesterStart, "dd.MM.yyyy", new CultureInfo("ru-ru"));
+                DateTime nowMonday =
+                    DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
+                bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
+                StringBuilder sb = new();
+                int dw = (int)DateTime.Now.DayOfWeek;
+                if (dw == 0)
                 {
-                    if (groups.All(x => x.Name != e.Message.Text.Split(' ')[1].ToUpper()))
-                    {
+                    dw = 1;
+                    isNumeric = !isNumeric;
+                    sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник (" +
+                                  (isNumeric ? "числитель" : "знаменатель") + ")");
+                }
+                else sb.AppendLine("Расписание на сегодня (" + (isNumeric ? "числитель" : "знаменатель") + ")");
+
+                List<Lesson> lessons = group.Lessons.Where(x =>
+                    x.DayOfWeek == (DayOfWeek)dw && (x.Type == LessonType.All ||
+                                                     x.Type == (isNumeric
+                                                         ? LessonType.Numerator
+                                                         : LessonType.Denominator))).ToList();
+                lessons = lessons.OrderBy(x => x.StartTime).ToList();
+                sb.AppendLine();
+                foreach (var lesson in lessons)
+                {
+                    sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
+                    sb.AppendLine($"📚 Предмет: {lesson.Name}");
+                    sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
+                    sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
+                    sb.AppendLine();
+                }
+
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = sb.ToString(),
+                    Keyboard = menuKeyboard,
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "завтра":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                int day = (int)DateTime.Now.DayOfWeek + 1;
+                DateTime semStart = DateTime.ParseExact(settings.SemesterStart, "dd.MM.yyyy", new CultureInfo("ru-ru"));
+                DateTime nowMonday = DateTime.Now.AddDays((day == 0 ? -7 : -day) + 2);
+                bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
+                //if (day == 1) isNumeric = !isNumeric;
+                StringBuilder sb = new();
+                if (day == 7)
+                {
+                    day = 1;
+                    isNumeric = !isNumeric;
+                    sb.AppendLine("Так как завтра воскресенье, то расписание на понедельник (" +
+                                  (isNumeric ? "числитель" : "знаменатель") + ")");
+                }
+                else sb.AppendLine("Расписание на завтра (" + (isNumeric ? "числитель" : "знаменатель") + ")");
+
+                Group group = groups.First(x => x.Name == user.Group);
+                List<Lesson> lessons = group.Lessons.Where(x =>
+                    x.DayOfWeek == (DayOfWeek)day && (x.Type == LessonType.All ||
+                                                      x.Type == (isNumeric
+                                                          ? LessonType.Numerator
+                                                          : LessonType.Denominator))).ToList();
+                lessons = lessons.OrderBy(x => x.StartTime).ToList();
+                sb.AppendLine();
+                foreach (var lesson in lessons)
+                {
+                    sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
+                    sb.AppendLine($"📚 Предмет: {lesson.Name}");
+                    sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
+                    sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
+                    sb.AppendLine();
+                }
+
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = sb.ToString(),
+                    Keyboard = menuKeyboard,
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "⚙ настройки":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                user.Location = Location.Settings;
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "Настройки",
+                    Keyboard = new KeyboardBuilder()
+                        .AddButton("⬅ Назад", "")
+                        .AddLine()
+                        .AddButton("⏲ Отправка по расписанию", "",
+                            user.IsAlarmOn ? KeyboardButtonColor.Positive : KeyboardButtonColor.Default)
+                        .AddLine()
+                        .AddButton("❌ Отменить регистрацию", "", KeyboardButtonColor.Negative)
+                        .Build(),
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "❌ отменить регистрацию":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                users.Remove(user);
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message =
+                        "Ваша регистрация была отменена. Чтобы продолжить пользоваться ботом, необходимо заново зарегистрироваться, отправив слово Начать",
+                    Keyboard = new KeyboardBuilder().Clear().Build(),
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "⏲ отправка по расписанию":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message =
+                        "Чтобы включить отправку расписания в необходимое время, отправьте его в формате /alarm ЧЧ:ММ, либо воспользуйтесь клавиатурой",
+                    Keyboard = new KeyboardBuilder()
+                        .AddButton("⬅ Назад", "")
+                        .AddLine()
+                        .AddButton("❌ Отключить расписание", "")
+                        .Build(),
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "❌ отключить расписание":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                user.IsAlarmOn = false;
+                user.Location = Location.Menu;
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "Расписание отключено",
+                    Keyboard = menuKeyboard,
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
+            case "⬅ назад":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                switch (user.Location)
+                {
+                    case Location.Settings:
+                        user.Location = Location.Menu;
                         await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
                         {
                             RandomId = Environment.TickCount,
-                            Message = "Такой группы не существует",
-                            PeerId = e.Message.PeerId
-                        });
-                        return;
-                    }
-                    if (users.All(x => x.Id != e.Message.FromId))
-                    {
-                        users.Add(new User()
-                        {
-                            Id = e.Message.FromId,
-                            Group = e.Message.Text.Split(' ')[1].ToUpper(),
-                            Location = Location.Menu
-                        });
-                        await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                        {
-                            RandomId = Environment.TickCount,
-                            Message = "Регистрация успешна. Вы теперь в меню.",
+                            Message = "Меню",
                             Keyboard = menuKeyboard,
                             PeerId = e.Message.PeerId
                         });
+                        break;
+                    case Location.Alarm:
+                        user.Location = Location.Settings;
                         await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
                         {
                             RandomId = Environment.TickCount,
-                            Message = "❗ВНИМАНИЕ❗\n\n" +
-                                      "Расписание может плохо спарситься или же измениться в течение семестра.Бот не несет ответственности за такие ошибки,\n" +
-                                      "невозможно что - то сделать без косяков(надеемся на взаимопонимание).Бот призван облегчить жизнь студентам,\n" +
-                                      "поэтому при обнаружении ошибок – сообщать https://vk.com/top_programer или https://vk.com/sanekmethanol\n\n" +
-                                      "⚠ Инструкция:\n\n" +
-                                      "📌 Есть кнопочка с расписанием, а есть кнопочка с настройками\n" +
-                                      "📌Если нажать кнопочку с настройками, откроются настройки\n" +
-                                      "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
-                                      "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
-                                      "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
-                                      "Version: " + (version.Major == 0 ? "BETA " : "") + version,
+                            Message = "Настройки",
+                            Keyboard = new KeyboardBuilder()
+                                .AddButton("⬅ Назад", "")
+                                .AddLine()
+                                .AddButton("⏲ Отправка по расписанию", "",
+                                    user.IsAlarmOn ? KeyboardButtonColor.Positive : KeyboardButtonColor.Default)
+                                .AddLine()
+                                .AddButton("❌ Отменить регистрацию", "", KeyboardButtonColor.Negative)
+                                .Build(),
                             PeerId = e.Message.PeerId
                         });
-                    }
-                    else
-                    {
-                        var user = users.First(x => x.Id == e.Message.FromId);
+                        break;
+                    case Location.Menu:
                         await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
                         {
                             RandomId = Environment.TickCount,
-                            Message = "Ваш ID уже зарегистрирован. Ваша группа " + user.Group,
+                            Message = "Ты дурак?",
+                            Keyboard = menuKeyboard,
                             PeerId = e.Message.PeerId
                         });
-                    }
-                }
-                else if (e.Message.Text.ToLower() == "сегодня")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    Group group = groups.First(x => x.Name == user.Group);
-                    DateTime semStart = DateTime.ParseExact(settings.SemesterStart, "dd.MM.yyyy", new CultureInfo("ru-ru"));
-                    DateTime nowMonday = DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
-                    bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
-                    StringBuilder sb = new();
-                    int dw = (int)DateTime.Now.DayOfWeek;
-                    if (dw == 0)
-                    {
-                        dw = 1;
-                        isNumeric = !isNumeric;
-                        sb.AppendLine("Так как сегодня воскресенье, то расписание на понедельник (" + (isNumeric ? "числитель" : "знаменатель") + ")");
-                    }
-                    else sb.AppendLine("Расписание на сегодня (" + (isNumeric ? "числитель" : "знаменатель") + ")");
-                    List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)dw && (x.Type == LessonType.All || x.Type == (isNumeric ? LessonType.Numerator : LessonType.Denominator))).ToList();
-                    lessons = lessons.OrderBy(x => x.StartTime).ToList();
-                    sb.AppendLine();
-                    foreach (var lesson in lessons)
-                    {
-                        sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
-                        sb.AppendLine($"📚 Предмет: {lesson.Name}");
-                        sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                        sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
-                        sb.AppendLine();
-                    }
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = sb.ToString(),
-                        Keyboard = menuKeyboard,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "завтра")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    int day = (int)DateTime.Now.DayOfWeek + 1;
-                    DateTime semStart = DateTime.ParseExact(settings.SemesterStart, "dd.MM.yyyy", new CultureInfo("ru-ru"));
-                    DateTime nowMonday = DateTime.Now.AddDays((day == 0 ? -7 : -day) + 2);
-                    bool isNumeric = (nowMonday - semStart).Days / 7 % 2 == 0;
-                    //if (day == 1) isNumeric = !isNumeric;
-                    StringBuilder sb = new();
-                    if (day == 7)
-                    {
-                        day = 1;
-                        isNumeric = !isNumeric;
-                        sb.AppendLine("Так как завтра воскресенье, то расписание на понедельник (" + (isNumeric ? "числитель" : "знаменатель") + ")");
-                    }
-                    else sb.AppendLine("Расписание на завтра (" + (isNumeric ? "числитель" : "знаменатель") + ")");
-                    Group group = groups.First(x => x.Name == user.Group);
-                    List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)day && (x.Type == LessonType.All || x.Type == (isNumeric ? LessonType.Numerator : LessonType.Denominator))).ToList();
-                    lessons = lessons.OrderBy(x => x.StartTime).ToList();
-                    sb.AppendLine();
-                    foreach (var lesson in lessons)
-                    {
-                        sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
-                        sb.AppendLine($"📚 Предмет: {lesson.Name}");
-                        sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                        sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
-                        sb.AppendLine();
-                    }
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = sb.ToString(),
-                        Keyboard = menuKeyboard,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "⚙ настройки")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    user.Location = Location.Settings;
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "Настройки",
-                        Keyboard = new KeyboardBuilder()
-                            .AddButton("⬅ Назад", "")
-                            .AddLine()
-                            .AddButton("⏲ Отправка по расписанию", "", user.IsAlarmOn ? KeyboardButtonColor.Positive : KeyboardButtonColor.Default)
-                            .AddLine()
-                            .AddButton("❌ Отменить регистрацию", "", KeyboardButtonColor.Negative)
-                            .Build(),
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "❌ отменить регистрацию")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    users.Remove(user);
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "Ваша регистрация была отменена. Чтобы продолжить пользоваться ботом, необходимо заново зарегистрироваться, отправив слово Начать",
-                        Keyboard = new KeyboardBuilder().Clear().Build(),
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "⏲ отправка по расписанию")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "Чтобы включить отправку расписания в необходимое время, отправьте его в формате /alarm ЧЧ:ММ, либо воспользуйтесь клавиатурой",
-                        Keyboard = new KeyboardBuilder()
-                            .AddButton("⬅ Назад", "")
-                            .AddLine()
-                            .AddButton("❌ Отключить расписание", "")
-                            .Build(),
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower().StartsWith("/alarm ") && regexTime.IsMatch(e.Message.Text.Split(' ')[1]))
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    user.IsAlarmOn = true;
-                    user.AlarmTime = TimeOnly.Parse(e.Message.Text.Split(' ')[1]);
-                    user.Location = Location.Menu;
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "Расписание установлено",
-                        Keyboard = menuKeyboard,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "❌ отключить расписание")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    user.IsAlarmOn = false;
-                    user.Location = Location.Menu;
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "Расписание отключено",
-                        Keyboard = menuKeyboard,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (e.Message.Text.ToLower() == "⬅ назад")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    switch (user.Location)
-                    {
-                        case Location.Settings:
-                            user.Location = Location.Menu;
-                            await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                            {
-                                RandomId = Environment.TickCount,
-                                Message = "Меню",
-                                Keyboard = menuKeyboard,
-                                PeerId = e.Message.PeerId
-                            });
-                            break;
-                        case Location.Alarm:
-                            user.Location = Location.Settings;
-                            await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                            {
-                                RandomId = Environment.TickCount,
-                                Message = "Настройки",
-                                Keyboard = new KeyboardBuilder()
-                                    .AddButton("⬅ Назад", "")
-                                    .AddLine()
-                                    .AddButton("⏲ Отправка по расписанию", "", user.IsAlarmOn ? KeyboardButtonColor.Positive : KeyboardButtonColor.Default)
-                                    .AddLine()
-                                    .AddButton("❌ Отменить регистрацию", "", KeyboardButtonColor.Negative)
-                                    .Build(),
-                                PeerId = e.Message.PeerId
-                            });
-                            break;
-                        case Location.Menu:
-                            await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                            {
-                                RandomId = Environment.TickCount,
-                                Message = "Ты дурак?",
-                                Keyboard = menuKeyboard,
-                                PeerId = e.Message.PeerId
-                            });
-                            break;
-                    }
-                }
-                else if (e.Message.Text.ToLower() == "❓ справка")
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = "❗ВНИМАНИЕ❗\n\n" +
-                                  "Расписание может плохо спарситься или же измениться в течение семестра.Бот не несет ответственности за такие ошибки,\n" +
-                                  "невозможно что - то сделать без косяков(надеемся на взаимопонимание).Бот призван облегчить жизнь студентам,\n" +
-                                  "поэтому при обнаружении ошибок – сообщать https://vk.com/top_programer или https://vk.com/sanekmethanol\n\n" +
-                                  "⚠ Инструкция:\n\n" +
-                                  "📌 Есть кнопочка с расписанием, а есть кнопочка с настройками\n" +
-                                  "📌Если нажать кнопочку с настройками, откроются настройки\n" +
-                                  "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
-                                  "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
-                                  "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
-                                  "Version: " + (version.Major == 0 ? "BETA " : "") + version,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else if (Tools.DaysOfWeek.Contains(e.Message.Text.ToLower()))
-                {
-                    User user = await GetUser(e.Message.FromId, e.Message.PeerId);
-                    if (user == null) return;
-                    int day = Tools.DaysOfWeek.ToList().IndexOf(e.Message.Text.ToLower()) + 1;
-                    if (day == 7)
-                    {
-                        await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                        {
-                            RandomId = Environment.TickCount,
-                            Message = "В воскресенье спать надо, а не на пары ходить",
-                            PeerId = e.Message.PeerId
-                        });
-                        return;
-                    }
-                    Group group = groups.First(x => x.Name == user.Group);
-                    List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)day).ToList();
-                    StringBuilder sb = new();
-                    sb.AppendLine($"Расписание на {Tools.DaysOfWeekV[day - 1]}");
-                    sb.AppendLine();
-                    foreach (var lesson in lessons)
-                    {
-                        sb.AppendLine("👀 " + (lesson.Type == LessonType.All ? "По числителю и знаменателю" : lesson.Type == LessonType.Numerator ? "По числителю" : "По знаменателю"));
-                        sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
-                        sb.AppendLine($"📚 Предмет: {lesson.Name}");
-                        sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
-                        sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
-                        sb.AppendLine();
-                    }
-                    await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    {
-                        RandomId = Environment.TickCount,
-                        Message = sb.ToString(),
-                        Keyboard = menuKeyboard,
-                        PeerId = e.Message.PeerId
-                    });
-                }
-                else
-                {
-                    //await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
-                    //{
-                    //    RandomId = Environment.TickCount,
-                    //    Message = "Неизвестная команда",
-                    //    PeerId = e.Message.PeerId
-                    //});
+                        break;
                 }
 
                 break;
             }
+            case "❓ справка":
+            {
+                User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+                if (user == null) return;
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "❗ВНИМАНИЕ❗\n\n" +
+                              "Расписание может плохо спарситься или же измениться в течение семестра.Бот не несет ответственности за такие ошибки,\n" +
+                              "невозможно что - то сделать без косяков(надеемся на взаимопонимание).Бот призван облегчить жизнь студентам,\n" +
+                              "поэтому при обнаружении ошибок – сообщать https://vk.com/top_programer или https://vk.com/sanekmethanol\n\n" +
+                              "⚠ Инструкция:\n\n" +
+                              "📌 Есть кнопочка с расписанием, а есть кнопочка с настройками\n" +
+                              "📌Если нажать кнопочку с настройками, откроются настройки\n" +
+                              "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
+                              "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
+                              "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
+                              "Version: " + (version.Major == 0 ? "BETA " : "") + version,
+                    PeerId = e.Message.PeerId
+                });
+                break;
+            }
         }
+
+        if (e.Message.Text.ToLower().StartsWith("/reg ") && regexGroup.IsMatch(e.Message.Text.Split(' ')[1].ToUpper()))
+        {
+            if (groups.All(x => x.Name != e.Message.Text.Split(' ')[1].ToUpper()))
+            {
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "Такой группы не существует",
+                    PeerId = e.Message.PeerId
+                });
+                return;
+            }
+
+            if (users.All(x => x.Id != e.Message.FromId))
+            {
+                users.Add(new User()
+                {
+                    Id = e.Message.FromId,
+                    Group = e.Message.Text.Split(' ')[1].ToUpper(),
+                    Location = Location.Menu
+                });
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "Регистрация успешна. Вы теперь в меню.",
+                    Keyboard = menuKeyboard,
+                    PeerId = e.Message.PeerId
+                });
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "❗ВНИМАНИЕ❗\n\n" +
+                              "Расписание может плохо спарситься или же измениться в течение семестра.Бот не несет ответственности за такие ошибки,\n" +
+                              "невозможно что - то сделать без косяков(надеемся на взаимопонимание).Бот призван облегчить жизнь студентам,\n" +
+                              "поэтому при обнаружении ошибок – сообщать https://vk.com/top_programer или https://vk.com/sanekmethanol\n\n" +
+                              "⚠ Инструкция:\n\n" +
+                              "📌 Есть кнопочка с расписанием, а есть кнопочка с настройками\n" +
+                              "📌Если нажать кнопочку с настройками, откроются настройки\n" +
+                              "📌Если нажать кнопочку с расписанием, будет выведено расписание (ШОК!)\n" +
+                              "📌Если написать день недели, например Понедельник, то будет выведено расписание на этот день недели.\n" +
+                              "🚽Сделано WinWins и чуть-чуть Methanol на .NET 6.0.8 и C#\n" +
+                              "Version: " + (version.Major == 0 ? "BETA " : "") + version,
+                    PeerId = e.Message.PeerId
+                });
+            }
+            else
+            {
+                var user = users.First(x => x.Id == e.Message.FromId);
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "Ваш ID уже зарегистрирован. Ваша группа " + user.Group,
+                    PeerId = e.Message.PeerId
+                });
+            }
+        }
+        else if (e.Message.Text.ToLower().StartsWith("/alarm ") && regexTime.IsMatch(e.Message.Text.Split(' ')[1]))
+        {
+            User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+            if (user == null) return;
+            user.IsAlarmOn = true;
+            user.AlarmTime = TimeOnly.Parse(e.Message.Text.Split(' ')[1]);
+            user.Location = Location.Menu;
+            await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+            {
+                RandomId = Environment.TickCount,
+                Message = "Расписание установлено",
+                Keyboard = menuKeyboard,
+                PeerId = e.Message.PeerId
+            });
+        }
+        else if (Tools.DaysOfWeek.Contains(e.Message.Text.ToLower()))
+        {
+            User user = await GetUser(e.Message.FromId, e.Message.PeerId);
+            if (user == null) return;
+            int day = Tools.DaysOfWeek.ToList().IndexOf(e.Message.Text.ToLower()) + 1;
+            if (day == 7)
+            {
+                await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+                {
+                    RandomId = Environment.TickCount,
+                    Message = "В воскресенье спать надо, а не на пары ходить",
+                    PeerId = e.Message.PeerId
+                });
+                return;
+            }
+
+            Group group = groups.First(x => x.Name == user.Group);
+            List<Lesson> lessons = group.Lessons.Where(x => x.DayOfWeek == (DayOfWeek)day).ToList();
+            StringBuilder sb = new();
+            sb.AppendLine($"Расписание на {Tools.DaysOfWeekV[day - 1]}");
+            sb.AppendLine();
+            foreach (var lesson in lessons)
+            {
+                sb.AppendLine("👀 " + (lesson.Type == LessonType.All ? "По числителю и знаменателю" :
+                    lesson.Type == LessonType.Numerator ? "По числителю" : "По знаменателю"));
+                sb.AppendLine($"⌛ Пара {lesson.Para}: {lesson.StartTime} - {lesson.EndTime}");
+                sb.AppendLine($"📚 Предмет: {lesson.Name}");
+                sb.AppendLine($"🏫 Аудитория: {lesson.Location}");
+                sb.AppendLine(lesson.Teacher != "" ? $"👨‍🏫 Препод: {lesson.Teacher}" : "👨‍🏫 Препод не указан");
+                sb.AppendLine();
+            }
+
+            await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+            {
+                RandomId = Environment.TickCount,
+                Message = sb.ToString(),
+                Keyboard = menuKeyboard,
+                PeerId = e.Message.PeerId
+            });
+        }
+        else
+        {
+            //await instance.Api.Messages.SendAsync(new VkNet.Model.RequestParams.MessagesSendParams()
+            //{
+            //    RandomId = Environment.TickCount,
+            //    Message = "Неизвестная команда",
+            //    PeerId = e.Message.PeerId
+            //});
+        }
+
         string json = JsonSerializer.Serialize(users, usersJsonOptions);
         File.WriteAllText(appRoot + "users.json", json);
     }
