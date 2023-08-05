@@ -4,22 +4,47 @@
 
 Весь проект написан на .NET 6.0 и для его запуска необходимо установить этот пакет (dotnet-runtime-6.0 для Linux или [для Windows и Linux](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime))
 
-### ScheduleToJSON
+### ScheduleBot.ExcelParser
 
 ###### Для запуска:
 
 	git clone https://github.com/WinWins-YT/BMSTU-ScheduleBot
-	cd BMSTU-ScheduleBot\ScheduleToJSON
+	cd BMSTU-ScheduleBot/ScheduleBot.ExcelParser
+    dotnet run
 
-Открыть файл ScheduleToJSON.csproj в Visual Studio и запустить или скомпилировать в .NET Framework
+###### Файл настроек
+
+После компиляции будет создан шаблонный файл `settings.json` в папке `bin/Debug/net6.0`, рекомендуется закрыть приложение с помощью `Ctrl-C` и проверить этот файл
+
+Содержимое файла `settings.json`:
+
+```json
+{
+    "NumberOfLessonsPerDay": [
+        [5, 4, 4, 4, 4, 3],
+        [5, 4, 4, 5, 5, 3],
+        [5, 5, 5, 5, 6, 3],
+        [7, 6, 6, 7, 5, 3],
+        [5, 4, 5, 5, 4, 3],
+        [3, 5, 5, 3, 3, 2],
+        [4, 4, 4, 5, 4, 3],
+        [4, 4, 3, 3, 6, 3]
+    ],
+    "ColumnCount": [29, 28, 25, 25, 9, 6, 15, 13]
+}
+```
+
+`NumberOfLessonsPerDay` тип `int[][]` - количество прописанных пар на каждый день на каждой странице. То есть итого должно быть 8 массивов на каждую страницу файла по 6 чисел на каждый день недели
+
+`ColumnCount` тип `int[]` - количество столбцов на каждой странице, итого 8 чисел
 
 ###### Как работает
 
 Этот проект переводит таблицу Excel с расписанием в JSON файл для дальнейшего использования
 
-Здесь используется COM библиотека Excel, поэтому запускать это следует только на Windows с установленным пакетом Microsoft Office
+При запуске предлагается указать путь к .xlsx файлу с расписанием. После этого будет выводится список всех полученных групп из этого файла. Затем в папке `bin/Debug/net6.0` создатся файл `schedule.json`
 
-При запуске предлагается указать путь к .xls файлу с расписанием. После этого будет выводится список всех полученных групп из этого файла. Затем создастся в папке `\bin\Debug\net6.0-windows` файл `schedule.json`
+Поддерживаются только файлы формата OpenOffice XML (Office 2007-2021) *.xlsx
 
 ### ScheduleBot
 
