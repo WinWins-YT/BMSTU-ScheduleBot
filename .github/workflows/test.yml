@@ -12,11 +12,16 @@ on:
           - info
           - warning
           - debug
+  workflow_run:
+    workflows: [ build ]
+    types: [ completed ]
+    
   workflow_call: 
     
 jobs: 
   test:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - uses: actions/checkout@v3
