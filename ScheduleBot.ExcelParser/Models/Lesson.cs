@@ -3,7 +3,7 @@ using ScheduleBot.ExcelParser.Tools;
 
 namespace ScheduleBot.ExcelParser.Models
 {
-    internal record Lesson
+    public record Lesson
     {
         public string Name { get; set; }
         public int Para { get; set; }

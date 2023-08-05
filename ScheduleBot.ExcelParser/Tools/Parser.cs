@@ -12,7 +12,7 @@ namespace ScheduleBot.ExcelParser.Tools
 
             text = text.Replace("_", "-").Trim();
             var cabMatch = regex.Match(text + " ");
-            string name = text.Substring(0, cabMatch.Index);
+            string name = text.Substring(0, cabMatch.Index).Trim();
             string teachers = text
                 .Substring(cabMatch.Index + cabMatch.Length > text.Length ? 
                     cabMatch.Index + cabMatch.Length - 1 :
@@ -22,7 +22,8 @@ namespace ScheduleBot.ExcelParser.Tools
             if (regex.IsMatch(teachers))
             {
                 var tMatch = regex.Match(teachers);
-                teachers = teachers.Substring(0, tMatch.Index) + ", " + teachers.Substring(tMatch.Index + tMatch.Length - 1);
+                teachers = teachers.Substring(0, tMatch.Index).Trim() + ", " + 
+                           teachers.Substring(tMatch.Index + tMatch.Length - 1).Trim();
                 cab += ", " + tMatch.Value.Trim();
             }
             if (teachers.Length > 30)
@@ -30,7 +31,7 @@ namespace ScheduleBot.ExcelParser.Tools
                 var temp = teachers.Split(',')[0].Split(' ').ToList();
                 temp.RemoveAt(0);
                 name += ", " + string.Join(' ', temp);
-                teachers = teachers.Split(' ')[0] + ", " + teachers.Split(' ')[^1];
+                teachers = teachers.Split(' ')[0].Trim() + ", " + teachers.Split(' ')[^1].Trim();
             }
             return new Lesson
             {
