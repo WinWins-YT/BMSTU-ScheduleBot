@@ -1,0 +1,30 @@
+name: Test ScheduleBot
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+  workflow_call: 
+    
+jobs: 
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+        
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+      
+      - name: Run tests
+        run: dotnet test ScheduleBot.Tests/ScheduleBot.Tests.csproj

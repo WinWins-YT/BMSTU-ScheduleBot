@@ -9,15 +9,15 @@ on:
     paths-ignore: [ '**.md' ]
   workflow_dispatch:
     inputs:
-    logLevel:
-    description: "Log level"
-    required: true
-    default: "warning"
-    type: choice
-    options:
-      - info
-      - warning
-      - debug
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "warning"
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
       
 jobs:
   build:
@@ -39,3 +39,5 @@ jobs:
         
       - name: Build ScheduleAPI
         run: dotnet build ScheduleAPI/ScheduleAPI.csproj
+        
+      - uses: ./.github/workflows/test.yml
