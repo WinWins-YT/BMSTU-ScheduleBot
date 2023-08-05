@@ -11,11 +11,7 @@ on:
         options:
           - info
           - warning
-          - debug
-  workflow_run:
-    workflows: [ build ]
-    types: [ completed ]
-    
+          - debug    
   workflow_call: 
     
 jobs: 

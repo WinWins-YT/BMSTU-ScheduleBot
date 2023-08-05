@@ -40,4 +40,5 @@ jobs:
       - name: Build ScheduleAPI
         run: dotnet build ScheduleAPI/ScheduleAPI.csproj
         
-      - uses: ./.github/workflows/test.yml
+  test:
+    uses: ./.github/workflows/test.yml
