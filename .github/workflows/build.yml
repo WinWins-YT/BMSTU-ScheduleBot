@@ -1,0 +1,41 @@
+name: Build ScheduleBot
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore: [ '**.md' ]
+  pull_request:
+    branches: [ master ]
+    paths-ignore: [ '**.md' ]
+  workflow_dispatch:
+    inputs:
+    logLevel:
+    description: "Log level"
+    required: true
+    default: "warning"
+    type: choice
+    options:
+      - info
+      - warning
+      - debug
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+          
+      - name: Build ScheduleBot.ExcelParser
+        run: dotnet build ScheduleBot.ExcelParser/ScheduleBot.ExcelParser.csproj
+        
+      - name: Build ScheduleBot
+        run: dotnet build ScheduleBot/ScheduleBot.csproj
+        
+      - name: Build ScheduleAPI
+        run: dotnet build ScheduleAPI/ScheduleAPI.csproj
