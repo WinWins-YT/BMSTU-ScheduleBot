@@ -41,4 +41,15 @@ jobs:
         run: dotnet build ScheduleAPI/ScheduleAPI.csproj
         
   test:
-    uses: ./.github/workflows/test.yml
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.x
+
+      - name: Run tests
+        run: dotnet test ScheduleBot.Tests/ScheduleBot.Tests.csproj
