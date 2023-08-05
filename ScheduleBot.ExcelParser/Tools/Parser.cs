@@ -33,6 +33,13 @@ namespace ScheduleBot.ExcelParser.Tools
                 name += ", " + string.Join(' ', temp);
                 teachers = teachers.Split(' ')[0].Trim() + ", " + teachers.Split(' ')[^1].Trim();
             }
+            var reg = new Regex(@"\sI{1,3}\b");
+            if (reg.IsMatch(teachers))
+            {
+                var mMatch = reg.Match(teachers);
+                name += $", {mMatch.Value.Trim()}";
+                teachers = teachers.Remove(mMatch.Index, mMatch.Length).Trim();
+            }
             return new Lesson
             {
                 Name = name,

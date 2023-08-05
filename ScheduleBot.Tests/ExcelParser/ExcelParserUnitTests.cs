@@ -43,8 +43,8 @@ public class ExcelParserUnitTests
         4, 
         (DayOfWeek)2, 
         LessonType.Denominator,
-        "ИНЖЕНЕРНАЯ ГРАФИКА лаб. I",
-        "Сулина II, Вяткин",
+        "ИНЖЕНЕРНАЯ ГРАФИКА лаб. I, II",
+        "Сулина, Вяткин",
         "1-309, 1-311")]
     public void ExcelParser_ParseCellData_ShouldSuccess(string text, int para, DayOfWeek dayOfWeek, LessonType type, 
         string expectedName, string expectedTeacher, string expectedLocation)
