@@ -1,4 +1,4 @@
-namespace ScheduleBot.ExcelParser.Enums
+namespace ScheduleBot.Resources.Enums
 {
     public enum LessonType
     {

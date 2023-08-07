@@ -1,7 +1,7 @@
-using ScheduleBot.ExcelParser.Enums;
-using ScheduleBot.ExcelParser.Tools;
+using ScheduleBot.Resources.Enums;
+using ScheduleBot.Resources.Tools;
 
-namespace ScheduleBot.ExcelParser.Models
+namespace ScheduleBot.Resources.Models
 {
     public record Lesson
     {
