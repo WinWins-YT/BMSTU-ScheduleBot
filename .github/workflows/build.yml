@@ -34,8 +34,8 @@ jobs:
       - name: Build ScheduleBot.ExcelParser
         run: dotnet build ScheduleBot.ExcelParser/ScheduleBot.ExcelParser.csproj
         
-      - name: Build ScheduleBot
-        run: dotnet build ScheduleBot/ScheduleBot.csproj
+      - name: Build ScheduleBot.VkBot
+        run: dotnet build ScheduleBot.VkBot/ScheduleBot.VkBot.csproj
         
       - name: Build ScheduleAPI
         run: dotnet build ScheduleAPI/ScheduleAPI.csproj
