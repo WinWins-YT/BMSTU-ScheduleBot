@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
-using ScheduleBot.ExcelParser.Enums;
-using ScheduleBot.ExcelParser.Models;
+using ScheduleBot.Resources.Enums;
+using ScheduleBot.Resources.Models;
 
 namespace ScheduleBot.ExcelParser.Tools
 {

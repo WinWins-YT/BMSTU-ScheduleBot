@@ -16,4 +16,7 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\ScheduleBot.Resources\ScheduleBot.Resources.csproj" />
+    </ItemGroup>
 </Project>

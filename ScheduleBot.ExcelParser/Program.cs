@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
 using OfficeOpenXml;
-using ScheduleBot.ExcelParser.Enums;
 using ScheduleBot.ExcelParser.Models;
 using ScheduleBot.ExcelParser.Tools;
+using ScheduleBot.Resources.Enums;
+using Group = ScheduleBot.Resources.Models.Group;
 
 Console.InputEncoding = System.Text.Encoding.UTF8;
 Console.OutputEncoding = System.Text.Encoding.UTF8;

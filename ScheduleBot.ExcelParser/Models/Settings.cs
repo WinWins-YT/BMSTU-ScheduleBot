@@ -1,6 +1,6 @@
 namespace ScheduleBot.ExcelParser.Models
 {
-    public record Settings
+    internal record Settings
     {
         public int[][] NumberOfLessonsPerDay { get; set; }
         public int[] ColumnCount { get; set; }
