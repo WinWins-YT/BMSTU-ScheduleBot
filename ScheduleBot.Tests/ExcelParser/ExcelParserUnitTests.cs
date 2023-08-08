@@ -45,5 +45,23 @@ public class ExcelParserUnitTests
         lesson.Name.Should().Be(expectedName);
         lesson.Teacher.Should().Be(expectedTeacher);
         lesson.Location.Should().Be(expectedLocation);
+        lesson.Para.Should().Be(para);
+        lesson.Type.Should().Be(type);
+        lesson.DayOfWeek.Should().Be(dayOfWeek);
+    }
+
+    [Theory]
+    [InlineData("ФИЗИКА лаб. 1-41 Горбунов, Радченко")]
+    [InlineData("ИНЖЕНЕРНАЯ ГРАФИКА лаб. I 9-509 Сулина II 3 381 Вяткин")]
+    [InlineData("ФИЗИЧЕСКАЯ КУЛЬТУРА И СПОРТ  к.8")]
+    public void ExcelParser_ParseWrongCellData_ShouldThrow(string text)
+    {
+        // Arrange
+        var para = Random.Shared.Next(1, 5);
+        var dayOfWeek = (DayOfWeek)Random.Shared.Next(1, 7);
+        var type = (LessonType)Enum.GetValues<LessonType>().GetValue(Random.Shared.Next(0, 3))!;
+        
+        // Act, assert
+        Assert.Throws<ArgumentException>(() => Parser.ParseLesson(text, para, dayOfWeek, type));
     }
 }
