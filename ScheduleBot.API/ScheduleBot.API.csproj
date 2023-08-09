@@ -2,13 +2,33 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\net6.0\ScheduleBot.API.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
+
+
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\ScheduleBot.Resources\ScheduleBot.Resources.csproj" />
+    </ItemGroup>
+
+
+
+
+
+
+
+
+
 
 
 

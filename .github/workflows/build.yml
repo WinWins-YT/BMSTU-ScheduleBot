@@ -37,8 +37,8 @@ jobs:
       - name: Build ScheduleBot.VkBot
         run: dotnet build ScheduleBot.VkBot/ScheduleBot.VkBot.csproj
         
-      - name: Build ScheduleAPI
-        run: dotnet build ScheduleAPI/ScheduleAPI.csproj
+      - name: Build ScheduleBot.API
+        run: dotnet build ScheduleBot.API/ScheduleBot.API.csproj
         
   test:
     runs-on: ubuntu-latest
