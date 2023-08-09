@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
 
         <IsPackable>false</IsPackable>
     </PropertyGroup>
@@ -23,8 +23,11 @@
 
 
     <ItemGroup>
+      <ProjectReference Include="..\ScheduleBot.API\ScheduleBot.API.csproj" />
       <ProjectReference Include="..\ScheduleBot.ExcelParser\ScheduleBot.ExcelParser.csproj" />
     </ItemGroup>
+
+
 
 
 
