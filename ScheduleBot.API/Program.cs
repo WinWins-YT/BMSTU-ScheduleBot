@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Net;
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using ScheduleBot.API.ActionFilters;
 using ScheduleBot.API.Services;
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen(x =>
 {
     x.CustomSchemaIds(y => y.Name);
     x.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Assembly.GetExecutingAssembly().GetName().Name + ".xml"));
+    x.IncludeXmlComments(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ScheduleBot.Resources.xml"));
 });
 
 builder.Services.AddScoped<IEnumerable<Group>, GroupListService>();

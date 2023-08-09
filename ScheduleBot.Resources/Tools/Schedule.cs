@@ -1,13 +1,30 @@
 namespace ScheduleBot.Resources.Tools;
 
+/// <summary>
+/// Класс утилит для расписания
+/// </summary>
 public static class Schedule
 {
+    /// <summary>
+    /// Дни недели, которые может ввести пользователь бота
+    /// </summary>
     public static string[] DaysOfWeek =
         { "воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота" };
 
+    /// <summary>
+    /// Дни недели в родительном падеже
+    /// </summary>
     public static string[] DaysOfWeekVerbal =
         { "воскресенье", "понедельник", "вторник", "среду", "четверг", "пятницу", "субботу" };
     
+    /// <summary>
+    /// Определение типа текущей недели
+    /// </summary>
+    /// <param name="semesterStart">Понедельник на начало семестра</param>
+    /// <returns>
+    /// <c>true</c> - неделя четная<br/>
+    /// <c>false</c> - неделя нечетная
+    /// </returns>
     public static bool IsNumeric(DateTime semesterStart)
     {
         var nowMonday = 

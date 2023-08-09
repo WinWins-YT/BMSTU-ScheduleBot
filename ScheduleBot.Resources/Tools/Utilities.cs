@@ -1,7 +1,15 @@
 namespace ScheduleBot.Resources.Tools
 {
+    /// <summary>
+    /// Класс с общими утилитами
+    /// </summary>
     internal static class Utilities
     {
+        /// <summary>
+        /// Конвертер номера пары во время начала пары
+        /// </summary>
+        /// <param name="para">Номер пары</param>
+        /// <returns>Время начала пары</returns>
         internal static TimeOnly ParaToStartTime(int para)
         {
             return para switch

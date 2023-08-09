@@ -5,8 +5,19 @@ using ScheduleBot.Resources.Tools;
 
 namespace ScheduleBot.Resources.Extensions;
 
+/// <summary>
+/// Класс с расширениями для расписания
+/// </summary>
 public static class ScheduleExtensions
 {
+    /// <summary>
+    /// Расширение для получения расписания из списка пар
+    /// </summary>
+    /// <param name="lessons">Список пар</param>
+    /// <param name="dayOfWeek">День недели на который необходимо выдать расписание</param>
+    /// <param name="semesterStart">Понедельник начала семестра</param>
+    /// <param name="showDayOfWeek">Как бот должен выдать день недели пользователю (Расписание на ...)</param>
+    /// <returns>Текст для отправки ботом пользователю</returns>
     public static string GetScheduleFor(this IEnumerable<Lesson> lessons, DayOfWeek dayOfWeek, DateTime semesterStart, string showDayOfWeek = "сегодня")
     {
         StringBuilder output = new();
