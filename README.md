@@ -90,7 +90,7 @@
 	cd BMSTU-ScheduleBot/ScheduleBot.API
 	dotnet build
 
-Скопировать файл `schedule.json`, который сформировал ScheduleToJSON в bin/Debug/net6.0
+Скопировать файл `schedule.json`, который сформировал ScheduleBot.ExcelParser в `bin/Debug/net6.0`
 
 	dotnet bin/Debug/net6.0/ScheduleBot.API.dll
 	
