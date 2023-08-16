@@ -58,7 +58,7 @@ logger.LogInformation("Loading settings.json...");
 var settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText("settings.json"), jsonOptions);
 if (settings is null)
 {
-    logger.LogCritical("Setttings object loaded from settings.json is null. Check this file.");
+    logger.LogCritical("Settings object loaded from settings.json is null. Check this file");
     return;
 }
 
@@ -66,7 +66,7 @@ logger.LogInformation("Loading schedule.json...");
 var groups = JsonSerializer.Deserialize<List<Group>>(File.ReadAllText("schedule.json"), jsonOptions);
 if (groups is null)
 {
-    logger.LogCritical("Schedule object loaded from schedule.json is null. Check this file.");
+    logger.LogCritical("Schedule object loaded from schedule.json is null. Check this file");
     return;
 }
 
@@ -87,9 +87,9 @@ await vk.AuthorizeAsync(new ApiAuthParams
     AccessToken = settings.Token
 }, tokenSource.Token);
 
-logger.LogInformation("Getting ID of {groupUrl}...", settings.GroupUrl);
+logger.LogInformation("Getting ID of {GroupUrl}...", settings.GroupUrl);
 var groupIdObject = await vk.Utils.ResolveScreenNameAsync(settings.GroupUrl.Substring(settings.GroupUrl.LastIndexOf('/') + 1));
-logger.LogInformation("ID resolved, it is {id}", groupIdObject.Id);
+logger.LogInformation("ID resolved, it is {Id}", groupIdObject.Id);
 
 var menuKeyboard = new KeyboardBuilder()
     .AddButton("Сегодня", "", KeyboardButtonColor.Primary)
@@ -167,7 +167,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
             Regex regexGroup = new(@"(ИУК([1-7]|11)|МК[1-9])-\d{2,3}[БМ]?");
             Regex regexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
             
-            logger.LogInformation("New message from {Id}: {message}", message.PeerId, message.Text);
+            logger.LogInformation("New message from {Id}: {Message}", message.PeerId, message.Text);
 
             var user = users.FirstOrDefault(x => x.Id == message.FromId);
             if (user == null && (message.Text.ToLower() != "начать" && message.Text.ToLower() != "start"))
@@ -196,11 +196,17 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                             Location = Location.Registration
                         };
                         users.Add(user);
-                        logger.LogInformation("Added new user with ID {id} to list", user.Id);
+                        logger.LogInformation("Added new user with ID {Id} to list", user.Id);
                     }
-                    else
+                    else if (user.Location != Location.Registration)
                     {
-                        user.Location = Location.Registration;
+                        vk.Messages.Send(new MessagesSendParams
+                        {
+                            RandomId = rnd.Next(),
+                            Message = $"Ваш ID уже зарегистрирован, ваша группа {user.Group}",
+                            PeerId = message.PeerId
+                        });
+                        continue;
                     }
                     
                     vk.Messages.SendAsync(new MessagesSendParams
@@ -317,7 +323,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                         Keyboard = menuKeyboard,
                         PeerId = message.PeerId
                     });
-                    logger.LogInformation("User {id} disabled alarm", user.Id);
+                    logger.LogInformation("User {Id} disabled alarm", user.Id);
                     break;
                 
                 case "⬅ назад" when user is not null:
@@ -417,7 +423,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                     user.Location = Location.Menu;
                     user.IsAlarmOn = false;
                 
-                    logger.LogInformation("User {id} is registered with group {group}", user.Id, user.Group);
+                    logger.LogInformation("User {Id} is registered with group {Group}", user.Id, user.Group);
                 
                     vk.Messages.SendAsync(new MessagesSendParams
                     {
@@ -460,7 +466,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                     Keyboard = menuKeyboard,
                     PeerId = message.PeerId
                 });
-                logger.LogInformation("Schedule for {dow} was sent", 
+                logger.LogInformation("Schedule for {DoW} was sent", 
                     Enum.GetName((DayOfWeek)Schedule.DaysOfWeek.ToList().IndexOf(message.Text.ToLower())));
             }
             
@@ -490,7 +496,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                         Keyboard = menuKeyboard,
                         PeerId = message.PeerId
                     });
-                    logger.LogInformation("User {id} set alarm for {time}", user.Id, user.AlarmTime.ToString("HH:mm"));
+                    logger.LogInformation("User {Id} set alarm for {Time}", user.Id, user.AlarmTime.ToString("HH:mm"));
                     break;
             }
         }
