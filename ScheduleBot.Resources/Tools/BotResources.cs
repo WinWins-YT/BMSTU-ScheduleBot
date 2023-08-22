@@ -29,13 +29,13 @@ public static class BotResources
         {
             var system = new SystemLoad();
 
-            return $"OS version: {Environment.OSVersion}\n" +
-                   $"Running {RuntimeInformation.FrameworkDescription}\n" +
-                   $"Number of logical processors: {Environment.ProcessorCount}\n" +
-                   $"CPU Model: {system.CpuModel}\n" +
-                   $"CPU Usage: {Math.Round(system.CpuLoad)}%\n" +
+            return $"OS version: {Environment.OSVersion}" + Environment.NewLine +
+                   $"Running {RuntimeInformation.FrameworkDescription}" + Environment.NewLine +
+                   $"Number of logical processors: {Environment.ProcessorCount}" + Environment.NewLine +
+                   $"CPU Model: {system.CpuModel}" + Environment.NewLine +
+                   $"CPU Usage: {Math.Round(system.CpuLoad)}%" + Environment.NewLine +
                    $"Memory usage: {Math.Round(system.UsedMemory)} MB/{Math.Round(system.TotalMemory)} MB, " +
-                   $"{Math.Round(system.UsedMemory / system.TotalMemory * 100)}%, {Math.Round(system.FreeMemory)} MB free\n" +
+                   $"{Math.Round(system.UsedMemory / system.TotalMemory * 100)}%, {Math.Round(system.FreeMemory)} MB free" + Environment.NewLine +
                    $"System uptime: {system.UpTime}";
         }
     }  

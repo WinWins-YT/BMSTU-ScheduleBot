@@ -202,7 +202,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                         vk.Messages.Send(new MessagesSendParams
                         {
                             RandomId = rnd.Next(),
-                            Message = $"Ваш ID уже зарегистрирован, ваша группа {user.Group}",
+                            Message = $"Ваш ID уже зарегистрирован, ваша группа {user.Group}. Отменить регистрацию можно в настройках",
                             PeerId = message.PeerId
                         });
                         continue;
@@ -375,7 +375,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                         case Location.Menu:
                             vk.Messages.SendAsync(new MessagesSendParams
                             {
-                                RandomId = Environment.TickCount,
+                                RandomId = rnd.Next(),
                                 Message = "Ты дурак?",
                                 Keyboard = menuKeyboard,
                                 PeerId = message.PeerId
@@ -389,9 +389,18 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                     vk.Messages.SendAsync(new MessagesSendParams
                     {
                         RandomId = rnd.Next(),
-                        Message = BotResources.HelpString + "\n\n" +
-                                  "Info for nerds:\n" +
-                                  "Assembly version: " + (version.Major == 0 ? "BETA " : "") + version + "\n" +
+                        Message = BotResources.HelpString + Environment.NewLine + Environment.NewLine +
+                                  "Info for nerds - /stats command",
+                        Keyboard = menuKeyboard,
+                        PeerId = message.PeerId
+                    });
+                    break;
+
+                case "/stats":
+                    vk.Messages.SendAsync(new MessagesSendParams
+                    {
+                        RandomId = rnd.Next(),
+                        Message = "Assembly version: " + (version.Major == 0 ? "BETA " : "") + version + Environment.NewLine +
                                   BotResources.ServerInfoString,
                         PeerId = message.PeerId
                     });
