@@ -29,6 +29,10 @@ public class ExcelParserUnitTests
         "ИНЖЕНЕРНАЯ ГРАФИКА лаб. I, II",
         "Сулина, Вяткин",
         "1-309, 1-311")]
+    [InlineData("ИНЖЕНЕРНАЯ ГРАФИКА лаб. I УАК1-2.46 Сулина II УАК1-2.48 Шестернина",
+        "ИНЖЕНЕРНАЯ ГРАФИКА лаб. I, II",
+        "Сулина, Шестернина",
+        "УАК1-2.46, УАК1-2.48")]
     public void ExcelParser_ParseCellData_ShouldSuccess(string text,
         string expectedName, string expectedTeacher, string expectedLocation)
     {
