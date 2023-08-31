@@ -47,21 +47,21 @@ for (int sheetIndex = 0; sheetIndex < settings.SheetCount; sheetIndex++)
         {
             for (var j = index; j <= index + day * 2 - 1; j++)
             {
-                var cellData = sheet.Cells[j, groupIndex].Text;
+                var cellBaseAddress = sheet.Cells[j, groupIndex].GetMergedRangeAddress();
+                var cellData = sheet.Cells[cellBaseAddress].Text;
                 if (string.IsNullOrEmpty(cellData)) 
                     continue;
                 
-                bool all, num = false;
+                bool all = false, num = false;
                 if (j % 2 == 0)
                 {
-                    all = sheet.Cells[j, groupIndex].Merge;
+                    all = sheet.Cells[cellBaseAddress].Rows > 1;
                     if (!all) 
                         num = true;
                 }
                 else
                 {
-                    all = sheet.Cells[j, groupIndex].Merge;
-                    if (all) 
+                    if (sheet.Cells[cellBaseAddress].Rows > 1)
                         continue;
                 }
 
