@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using ScheduleBot.API.Controllers.V1;
 using ScheduleBot.Resources.Models;
 using Xunit;
@@ -16,7 +15,7 @@ public partial class ApiUnitTests
     public void Api_OnGetOrganizations_ShouldSuccess()
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, null);
         
         // Act
@@ -31,7 +30,7 @@ public partial class ApiUnitTests
     public void Api_OnGetCourses_ShouldSuccess()
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, null);
         
         // Act
@@ -46,7 +45,7 @@ public partial class ApiUnitTests
     public void Api_OnGetCourses_ShouldThrowOnWrongOrg()
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, null);
         
         // Act, assert
@@ -58,7 +57,7 @@ public partial class ApiUnitTests
     public void Api_OnGetGroups_ShouldSuccess(IEnumerable<Group> groups, string course, string[] expectedGroups)
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, groups);
         
         // Act
@@ -73,7 +72,7 @@ public partial class ApiUnitTests
     public void Api_OnGetGroups_ShouldThrowOnWrongCourse()
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, null);
         
         // Act, assert
@@ -85,7 +84,7 @@ public partial class ApiUnitTests
     public void Api_OnGetSchedule_ShouldSuccess(IEnumerable<Group> groups, string course, string group, int expectedCount)
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var controller = new ApiController(logger, groups);
         
         // Act
@@ -100,7 +99,7 @@ public partial class ApiUnitTests
     public void Api_OnGetSchedule_ShouldThrowOnWrongGroup()
     {
         // Arrange
-        var logger = LoggerFactory.Create(x => x.AddConsole()).CreateLogger<ApiController>();
+        var logger = NullLogger<ApiController>.Instance;
         var groups = new List<Group>
         {
             new()
