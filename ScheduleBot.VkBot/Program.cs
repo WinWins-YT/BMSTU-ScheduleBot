@@ -163,7 +163,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
             
             if (message.PeerId >= 2000000000) return;
             
-            Regex regexGroup = new(@"(ИУК([1-7]|11)|МК[1-9])-\d{2,3}[БМ]?");
+            Regex regexGroup = new(@"(ИУК([1-7]|11)|МК([1-9]|11))-\d{2,3}[БМ]?");
             Regex regexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
             
             logger.LogInformation("New message from {Id}: {Message}", message.PeerId, message.Text);
