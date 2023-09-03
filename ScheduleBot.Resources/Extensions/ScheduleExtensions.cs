@@ -23,34 +23,36 @@ public static class ScheduleExtensions
         StringBuilder output = new();
         var isNumeric = Schedule.IsNumeric(semesterStart);
         
-        var dw = (int)dayOfWeek;
-        if (dw == 0)
+        if (dayOfWeek == DayOfWeek.Sunday)
         {
-            dw = 1;
+            dayOfWeek = DayOfWeek.Monday;
             isNumeric = !isNumeric;
             output.AppendLine("Так как " + showDayOfWeek + " воскресенье, то расписание на понедельник (" +
                           (isNumeric ? "числитель" : "знаменатель") + ")");
         }
         else
         {
+            if (dayOfWeek == DayOfWeek.Monday && showDayOfWeek == "завтра")
+                isNumeric = !isNumeric;
+            
             if (showDayOfWeek != "сегодня" && showDayOfWeek != "завтра")
                 output.AppendLine("Расписание на " + showDayOfWeek);
             else
                 output.AppendLine($"Расписание на {showDayOfWeek} ({(isNumeric ? "числитель" : "знаменатель")})");
         }
 
-        List<Lesson> lessonsList = new();
+        List<Lesson> lessonsList;
         
         if (showDayOfWeek != "сегодня" && showDayOfWeek != "завтра")
-            lessonsList = lessons.Where(x => x.DayOfWeek == (DayOfWeek)dw)
-                .OrderBy(x => x.StartTime).ToList();
+            lessonsList = lessons.Where(x => x.DayOfWeek == dayOfWeek)
+                .OrderBy(x => x.Para).ToList();
         else
             lessonsList = lessons.Where(x =>
-                x.DayOfWeek == (DayOfWeek)dw && (x.Type == LessonType.All ||
+                x.DayOfWeek == dayOfWeek && (x.Type == LessonType.All ||
                                                  x.Type == (isNumeric
                                                      ? LessonType.Numerator
                                                      : LessonType.Denominator)))
-                .OrderBy(x => x.StartTime).ToList();
+                .OrderBy(x => x.Para).ToList();
 
         output.AppendLine();
         
