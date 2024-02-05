@@ -9,11 +9,11 @@ namespace ScheduleBot.ExcelParser.Tools
         internal static Lesson ParseLesson(string text, int para, DayOfWeek dayOfWeek, LessonType type = LessonType.All)
         {
             Regex regex = new(@"\s([1-7]-[0-9]{3}(\S?|(/[1-9])?)|УАК\d-\d\.\d{2}|к\.[1-7]|ул\.Моск\.-лаб\." +
-                              @"|ОКБ ""МЭЛ""|НПП ""Тайфун""|ООО ""РИТЦ"")\s");
+                              @"|ОКБ ""МЭЛ""|НПП ""Тайфун""|ООО ""РИТЦ""|ООО РИТЦ)\s");
 
             text = text.Replace("_", "-").Trim();
             if (regex.Matches(text + " ").Count == 0)
-                throw new ArgumentException("Wrong cell data was passed", nameof(text));
+                throw new ArgumentException($"Wrong cell data was passed ({text})", nameof(text));
             
             var cabMatch = regex.Match(text + " ");
             string name = text.Substring(0, cabMatch.Index).Trim();
