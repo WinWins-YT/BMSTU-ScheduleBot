@@ -8,8 +8,9 @@ namespace ScheduleBot.ExcelParser.Tools
     {
         internal static Lesson ParseLesson(string text, int para, DayOfWeek dayOfWeek, LessonType type = LessonType.All)
         {
-            Regex regex = new(@"\s([1-7]-[0-9]{3}(\S?|(/[1-9])?)|УАК\d-\d\.\d{2}|к\.[1-7]|ул\.Моск\.-лаб\." +
-                              @"|ОКБ ""МЭЛ""|НПП ""Тайфун""|ООО ""РИТЦ""|ООО РИТЦ)\s");
+            Regex regex = new(@"\s([1-7]-[0-9]{3}(\S?|(/[1-9])?)|УАК\d-\d\.\d{2}|УЛК\d-\.\d-\d\.\d{1,2}|к\.[1-7]|ул\.Моск\.-лаб\." +
+                              @"|ОКБ ""МЭЛ""|НПП ""Тайфун""|ООО ""РИТЦ""|ООО РИТЦ|АО ""Калугапутьмаш""|ПАО ""КАДВИ""|" + 
+                              @"Московская ул\., 256а-лаб\.)\s");
 
             text = text.Replace("_", "-").Trim();
             if (regex.Matches(text + " ").Count == 0)
