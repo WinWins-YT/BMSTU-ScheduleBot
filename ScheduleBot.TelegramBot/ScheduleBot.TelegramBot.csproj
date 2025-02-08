@@ -18,4 +18,10 @@
       <ProjectReference Include="..\ScheduleBot.Resources\ScheduleBot.Resources.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="settings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
