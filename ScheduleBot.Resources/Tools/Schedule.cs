@@ -29,6 +29,8 @@ public static class Schedule
     {
         var nowMonday = 
             DateTime.Now.AddDays((DateTime.Now.DayOfWeek == 0 ? -7 : -(int)DateTime.Now.DayOfWeek) + 1);
-        return (nowMonday - semesterStart).Days / 7 % 2 == 0;
+        var semesterStartMonday = 
+            semesterStart.AddDays((semesterStart.DayOfWeek == 0 ? -7 : -(int)semesterStart.DayOfWeek) + 1);
+        return (nowMonday - semesterStartMonday).Days / 7 % 2 == 0;
     }
 }
