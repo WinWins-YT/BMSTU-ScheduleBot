@@ -16,7 +16,7 @@ public record User
     /// </summary>
     public string Group { get; set; }
     /// <summary>
-    /// Флаг, включено ли раписание у пользователя
+    /// Флаг, включено ли оповещение у пользователя
     /// </summary>
     public bool IsAlarmOn { get; set; }
     /// <summary>
