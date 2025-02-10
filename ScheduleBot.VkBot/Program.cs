@@ -166,9 +166,6 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
             
             if (message.PeerId >= 2000000000) return;
             
-            Regex regexGroup = new(@"(ИУК([1-7]|11)|МК([1-9]|11))-\d{2,3}[БМ]?");
-            Regex regexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
-            
             logger.LogInformation("New message from {Id}: {Message}", message.PeerId, message.Text);
 
             var user = users.FirstOrDefault(x => x.Id == message.FromId);
@@ -412,7 +409,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
 
             if (user is not null && user.Location == Location.Registration)
             {
-                if (!regexGroup.IsMatch(message.Text.ToUpper()) || groups.All(x => x.Name != message.Text.ToUpper()))
+                if (!BotResources.RegexGroup.IsMatch(message.Text.ToUpper()) || groups.All(x => x.Name != message.Text.ToUpper()))
                 {
                     vk.Messages.Send(new MessagesSendParams
                     {
@@ -423,7 +420,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                 }
                 else
                 {
-                    user.Group = regexGroup.Match(message.Text.ToUpper()).Value;
+                    user.Group = BotResources.RegexGroup.Match(message.Text.ToUpper()).Value;
                     user.Location = Location.Menu;
                     user.IsAlarmOn = false;
                 
@@ -469,7 +466,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
 
             switch (user.Location)
             {
-                case Location.AlarmSet when !regexTime.IsMatch(message.Text.ToLower()):
+                case Location.AlarmSet when !BotResources.RegexTime.IsMatch(message.Text.ToLower()):
                     vk.Messages.Send(new MessagesSendParams
                     {
                         RandomId = rnd.Next(),

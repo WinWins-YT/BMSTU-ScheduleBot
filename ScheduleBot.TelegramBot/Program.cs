@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using ScheduleBot.Resources.Extensions;
 using ScheduleBot.Resources.Tools;
@@ -23,7 +22,6 @@ Console.InputEncoding = Encoding.UTF8;
 Console.OutputEncoding = Encoding.UTF8;
 
 var appRoot = AppDomain.CurrentDomain.BaseDirectory;
-Random rnd = new();
 var version = Assembly.GetExecutingAssembly().GetName().Version!;
 var tokenSource = new CancellationTokenSource();
 var jsonOptions = new JsonSerializerOptions
@@ -121,9 +119,6 @@ bot.StartReceiving(async (botClient, update, token) =>
                     var chat = message.Chat;
                     logger.LogInformation("New message from {Username} ({Id}): {Message}", from.Username, from.Id,
                         messageText);
-        
-                    Regex regexGroup = new(@"(ИУК([1-7]|11)|МК([1-9]|11))-\d{2,3}[БМ]?");
-                    Regex regexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
                     
                     var user = users.FirstOrDefault(x => x.Id == chat.Id);
                     if (user == null && !messageText.Equals("/start", StringComparison.CurrentCultureIgnoreCase))
@@ -204,13 +199,13 @@ bot.StartReceiving(async (botClient, update, token) =>
                     
                     if (user is not null && user.Location == Location.Registration)
                     {
-                        if (!regexGroup.IsMatch(messageText.ToUpper()) || groups.All(x => !x.Name.Equals(messageText, StringComparison.CurrentCultureIgnoreCase)))
+                        if (!BotResources.RegexGroup.IsMatch(messageText.ToUpper()) || groups.All(x => !x.Name.Equals(messageText, StringComparison.CurrentCultureIgnoreCase)))
                         {
                             await botClient.SendMessage(chat.Id, "Такой группы не существует, попробуйте еще раз", cancellationToken: token);
                         }
                         else
                         {
-                            user.Group = regexGroup.Match(messageText.ToUpper()).Value;
+                            user.Group = BotResources.RegexGroup.Match(messageText.ToUpper()).Value;
                             user.Location = Location.Menu;
                             user.IsAlarmOn = false;
                 
@@ -241,7 +236,7 @@ bot.StartReceiving(async (botClient, update, token) =>
                     
                     switch (user.Location)
                     {
-                        case Location.AlarmSet when !regexTime.IsMatch(messageText.ToLower()):
+                        case Location.AlarmSet when !BotResources.RegexTime.IsMatch(messageText.ToLower()):
                             await botClient.SendMessage(chat.Id, "Время введено неверно, попробуйте еще раз", cancellationToken: token);
                             break;
                 

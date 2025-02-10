@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace ScheduleBot.Resources.Tools;
 
@@ -39,4 +40,13 @@ public static class BotResources
                    $"System uptime: {system.UpTime}";
         }
     }  
+    
+    /// <summary>
+    /// Regex для группы
+    /// </summary>
+    public static readonly Regex RegexGroup = new(@"(ИУК([1-7]|11)|МК([1-9]|11))-\d{2,3}[БМ]?");
+    /// <summary>
+    /// Regex для времени
+    /// </summary>
+    public static readonly Regex RegexTime = new("([0-1]?[0-9]|2[0-3]):[0-5][0-9]");
 }
