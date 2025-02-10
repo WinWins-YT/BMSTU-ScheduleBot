@@ -364,7 +364,7 @@ bot.StartReceiving(async (botClient, update, token) =>
             logger.LogError("Exception occurred at update: {Message}", ex.Message);
         }
     },
-    (_, exception, _) =>
+    async (_, exception, _) =>
     {
         switch (exception)
         {
@@ -377,8 +377,8 @@ bot.StartReceiving(async (botClient, update, token) =>
                 logger.LogError("Unknown exception: {Message}", exception.Message);
                 break;
         }
-
-        return Task.CompletedTask;
+        
+        await Task.Delay(5000, tokenSource.Token);
     },
     receiverOptions, tokenSource.Token);
 

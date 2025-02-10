@@ -113,6 +113,7 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
     OnException = ex =>
     {
         logger.LogError(ex, "Exception occurred that can cause malfunctions");
+        Thread.Sleep(10000);
     },
     
     OnWarn = ex =>
@@ -129,6 +130,8 @@ var longPool = new BotsLongPoolUpdatesHandler(new BotsLongPoolUpdatesHandlerPara
                 logger.LogWarning(ex, "Exception occured that not causing malfunctions");
                 break;
         }
+        
+        Thread.Sleep(10000);
     },
     
     OnUpdates = e =>
